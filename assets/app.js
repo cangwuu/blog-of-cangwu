@@ -15,12 +15,27 @@
   function applyTheme(theme) {
     root.dataset.theme = theme;
     try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
+    syncGiscus(theme);
   }
   var themeBtn = $('#theme-toggle');
   if (themeBtn) {
     themeBtn.addEventListener('click', function () {
       applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
     });
+  }
+
+  /* ---------- 评论框跟随站点主题 ---------- */
+  function syncGiscus(theme) {
+    var frame = document.querySelector('iframe.giscus-frame');
+    if (!frame || !frame.contentWindow) return;
+    frame.contentWindow.postMessage(
+      { giscus: { setConfig: { theme: theme === 'dark' ? 'dark' : 'light' } } },
+      'https://giscus.app'
+    );
+  }
+  var giscusFrame = document.querySelector('iframe.giscus-frame');
+  if (giscusFrame) {
+    giscusFrame.addEventListener('load', function () { syncGiscus(currentTheme()); });
   }
 
   /* ---------- 移动端菜单 ---------- */

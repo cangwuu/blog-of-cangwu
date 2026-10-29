@@ -222,7 +222,10 @@ for (const post of posts) {
   const idx = posts.findIndex((p) => p.slug === post.slug);
   const newer = posts[idx - 1];
   const older = posts[idx + 1];
-  const comments = site.comments?.enabled
+  // 评论需要 repoId / categoryId，缺一个就不渲染，避免页面上出现坏掉的框
+  const commentsReady =
+    site.comments?.enabled && site.comments.repoId && site.comments.categoryId;
+  const comments = commentsReady
     ? `<section class="comments" id="comments">
   <h2 class="comments-title">评论</h2>
   <script src="https://giscus.app/client.js"

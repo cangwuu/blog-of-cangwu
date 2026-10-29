@@ -46,10 +46,15 @@ export default {
   },
 
   // 评论（giscus，基于 GitHub Discussions，免费）
-  // 用法：仓库先开启 Discussions，去 https://giscus.app 生成下面四个值
+  // 开启步骤：
+  //   1. 仓库 Settings → General → Features，勾上 Discussions
+  //   2. 打开 https://giscus.app/zh-CN ，仓库填 cangwuu/blog-of-cangwu
+  //      （第一次会让你安装 giscus App，点一下授权）
+  //   3. 页面往下会生成一段代码，把里面的 data-repo-id 和 data-category-id
+  //      两个值抄到下面，然后把 enabled 改成 true
   comments: {
     enabled: false,
-    repo: '',
+    repo: 'cangwuu/blog-of-cangwu',
     repoId: '',
     category: 'Announcements',
     categoryId: '',
@@ -57,9 +62,11 @@ export default {
     theme: 'preferred_color_scheme',
   },
 
-  // 统计（可选，留空则不注入脚本）
+  // 统计（Cloudflare Web Analytics，免费且不追踪个人）
+  // 开启步骤：Cloudflare 控制台 → 分析 → Web Analytics → 添加站点
+  //           → 复制 "JS 代码片段" 里的 token 填到下面
   analytics: {
-    // Cloudflare Web Analytics 的 token，例如 'a1b2c3...'
+    // 例如 'a1b2c3d4e5f6...'
     cloudflareToken: '',
   },
 
