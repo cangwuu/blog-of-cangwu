@@ -19,7 +19,7 @@ export default {
     bio: '写代码，也写字。这里放一些值得留下来的东西。',
     // 社交链接，不需要的整行删掉即可
     links: [
-      { name: 'GitHub', url: 'https://github.com/cangwu', icon: 'github' },
+      { name: 'GitHub', url: 'https://github.com/cangwuu', icon: 'github' },
       { name: 'RSS', url: '/feed.xml', icon: 'rss' },
       { name: '关于', url: '/about/', icon: 'link' },
     ],

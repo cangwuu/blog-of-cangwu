@@ -29,7 +29,7 @@ description: 关于本站和它的作者。
 
 ## 联系我
 
-- GitHub：[github.com/cangwu](https://github.com/cangwu)
+- GitHub：[github.com/cangwuu](https://github.com/cangwuu)
 - 本站：[cangwu.dpdns.org](https://cangwu.dpdns.org)
 
 有错别字、事实错误，或者单纯想聊两句，都欢迎。
