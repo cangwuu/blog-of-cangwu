@@ -283,10 +283,12 @@
     canvas.setAttribute('aria-hidden', 'true');
     document.body.appendChild(canvas);
     var ctx = canvas.getContext('2d');
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // 拖尾只是装饰，分辨率压低一点，肉眼几乎看不出差别
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     var dots = [];
     var color = [15, 118, 110];
     var lastSpawn = 0;
+    var running = false;
 
     function readColor() {
       var v = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
@@ -309,12 +311,41 @@
     resize();
     window.addEventListener('resize', resize);
 
+    var prev = 0;
+    function frame(now) {
+      var dt = Math.min(50, now - prev);
+      prev = now;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (var i = dots.length - 1; i >= 0; i--) {
+        var d = dots[i];
+        d.life -= dt / 700;
+        if (d.life <= 0) { dots.splice(i, 1); continue; }
+        d.x += d.vx * dt * 0.06;
+        d.y += d.vy * dt * 0.06;
+        var a = d.life * d.life;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r * d.life, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (a * 0.62).toFixed(3) + ')';
+        ctx.fill();
+      }
+      // 没有粒子就停掉动画循环，别让空转占着 CPU
+      if (dots.length) requestAnimationFrame(frame);
+      else { running = false; ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }
+    }
+
+    function kick() {
+      if (running) return;
+      running = true;
+      prev = performance.now();
+      requestAnimationFrame(frame);
+    }
+
     function spawn(x, y) {
-      if (dots.length > 90) return;
+      if (dots.length >= 60) return;
       dots.push({
         x: x,
         y: y,
-        r: 1.8 + Math.random() * 2.6,
+        r: 1.8 + Math.random() * 2.4,
         life: 1,
         vx: (Math.random() - 0.5) * 0.22,
         vy: (Math.random() - 0.5) * 0.22 - 0.1
@@ -323,30 +354,10 @@
 
     document.addEventListener('mousemove', function (e) {
       var now = performance.now();
-      if (now - lastSpawn < 14) return;
+      if (now - lastSpawn < 22) return;
       lastSpawn = now;
       spawn(e.clientX, e.clientY);
+      kick();
     }, { passive: true });
-
-    var prev = performance.now();
-    function frame(now) {
-      var dt = Math.min(50, now - prev);
-      prev = now;
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      for (var i = dots.length - 1; i >= 0; i--) {
-        var d = dots[i];
-        d.life -= dt / 750;
-        if (d.life <= 0) { dots.splice(i, 1); continue; }
-        d.x += d.vx * dt * 0.06;
-        d.y += d.vy * dt * 0.06;
-        var e2 = d.life * d.life;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r * d.life, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (e2 * 0.62).toFixed(3) + ')';
-        ctx.fill();
-      }
-      requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
   })();
 })();
