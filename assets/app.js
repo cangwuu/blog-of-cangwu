@@ -16,6 +16,7 @@
     root.dataset.theme = theme;
     try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
     syncGiscus(theme);
+    syncBadges(theme);
   }
   var themeBtn = $('#theme-toggle');
   if (themeBtn) {
@@ -23,6 +24,16 @@
       applyTheme(currentTheme() === 'dark' ? 'light' : 'dark');
     });
   }
+
+  /* ---------- 页脚徽章跟随站点主题 ---------- */
+  function syncBadges(theme) {
+    var list = document.querySelectorAll('img[data-light][data-dark]');
+    for (var i = 0; i < list.length; i++) {
+      var next = theme === 'dark' ? list[i].getAttribute('data-dark') : list[i].getAttribute('data-light');
+      if (next && list[i].getAttribute('src') !== next) list[i].setAttribute('src', next);
+    }
+  }
+  syncBadges(currentTheme());
 
   /* ---------- 评论框跟随站点主题 ---------- */
   function syncGiscus(theme) {

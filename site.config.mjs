@@ -31,7 +31,23 @@ export default {
     { name: '归档', url: '/archives/' },
     { name: '标签', url: '/tags/' },
     { name: '小玩具', url: '/toys/' },
+    { name: '友链', url: '/links/' },
     { name: '关于', url: '/about/' },
+  ],
+
+  // 友链（渲染到 /links/ 页面）
+  // avatar 可以不填，会用一个带首字母的圆图标代替
+  friends: [
+    {
+      name: '萌社区',
+      url: 'https://moe.one/',
+      desc: '萌国 ICP 备案的所在地',
+    },
+    {
+      name: '异次元之旅',
+      url: 'https://travel.moe/go.html',
+      desc: '去萌站成员的星球上旅行',
+    },
   ],
 
   // 每页文章数
@@ -46,6 +62,18 @@ export default {
     icp: '萌ICP备20264210号',
     icpUrl: 'https://icp.gov.moe/?keyword=20264210',
     extra: '由 Markdown 与一点点耐心驱动',
+    // 萌备徽章旁边的「异次元之旅」小图标，不需要就把这一段删掉
+    travelBadge: {
+      url: 'https://travel.moe/go.html',
+      light: 'https://travel.moe/images/logo/gif-kt/startup-cyan.gif',
+      dark: 'https://travel.moe/images/logo/gif-kt/startup-cyan-dark.gif',
+      title: '异次元之旅-跃迁',
+    },
+  },
+
+  // 页脚访问量（不蒜子，第三方免费计数，不填则隐藏）
+  stats: {
+    busuanzi: true,
   },
 
   // 评论（giscus，基于 GitHub Discussions，免费）

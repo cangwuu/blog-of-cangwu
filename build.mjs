@@ -372,6 +372,51 @@ if (fs.existsSync(pagesDir)) {
   }
 }
 
+// 友链
+const friends = site.friends || [];
+const friendCard = (f) => {
+  let hue = 0;
+  for (const ch of f.name) hue = (hue * 31 + ch.codePointAt(0)) % 360;
+  const avatar = f.avatar
+    ? `<img class="friend-avatar" src="${esc(f.avatar)}" alt="" width="44" height="44" loading="lazy">`
+    : `<span class="friend-avatar friend-avatar-ph" style="--h:${hue}" aria-hidden="true">${esc(
+        f.name.slice(0, 1)
+      )}</span>`;
+  return `<a class="friend-card" href="${esc(f.url)}" target="_blank" rel="noopener">
+    ${avatar}
+    <span class="friend-info"><strong>${esc(f.name)}</strong><span>${esc(f.desc || '')}</span></span>
+  </a>`;
+};
+
+write('links/index.html', tpl.layout({
+  site,
+  title: '友链',
+  description: `${site.title}的友链`,
+  path: '/links/',
+  bodyClass: 'page-links',
+  content: `<div class="container page-narrow">
+  <header class="page-header">
+    <h1>友链</h1>
+    <p>${friends.length} 个站点</p>
+  </header>
+  <div class="friend-grid">
+    ${friends.map(friendCard).join('\n    ') || '<p class="empty">还没有友链。</p>'}
+  </div>
+
+  <section class="friend-apply">
+    <h2>交换友链</h2>
+    <p>在任意一篇文章底部留言，把站名、地址和一句话介绍发给我就行。</p>
+    <p>下面是本站信息，方便你回链：</p>
+    <figure class="code-block"><figcaption><span>本站信息</span></figcaption><pre><code>名称：${esc(
+      site.title
+    )}
+地址：${esc(site.url)}/
+头像：${esc(site.url)}/assets/avatar.jpg
+简介：${esc(site.subtitle || site.description)}</code></pre></figure>
+  </section>
+</div>`,
+}));
+
 // 404
 write('404.html', tpl.layout({
   site, title: '页面走丢了', description: '404', path: '/404.html', bodyClass: 'page-404',
@@ -429,7 +474,7 @@ write('feed.xml', feed);
 const urls = [
   { loc: '/', lastmod: posts[0]?.updatedIso },
   ...posts.map((p) => ({ loc: p.url, lastmod: p.updatedIso })),
-  { loc: '/archives/' }, { loc: '/tags/' }, { loc: '/about/' }, { loc: '/reactor/' },
+  { loc: '/archives/' }, { loc: '/tags/' }, { loc: '/toys/' }, { loc: '/links/' }, { loc: '/about/' }, { loc: '/reactor/' },
   ...tags.map((t) => ({ loc: `/tags/${encodeURIComponent(t.name)}/` })),
 ];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
