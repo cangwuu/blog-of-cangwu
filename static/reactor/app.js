@@ -4,7 +4,7 @@ let ctx,analyser,bins,dbBuf,wave,master,stream,source,buffer,started=0,offset=0,
 
 /* ---------------- 控制棒阵列 ---------------- */
 
-const MAXR=15,HALF=.3,FMIN=45,FMAX=16000,NBANDS=28;
+const MAXR=15,HALF=.46,FMIN=45,FMAX=16000,NBANDS=28;
 let rods=[],rodStep=1;
 const bands=[];for(let i=0;i<NBANDS;i++)bands.push({raw:-120,val:0});
 
@@ -20,7 +20,12 @@ function buildRods(){
   for(let x=-MAXR;x<=MAXR;x+=rodStep)for(let z=-MAXR;z<=MAXR;z+=rodStep){
     const r=Math.hypot(x,z);
     if(r>MAXR)continue;
-    rods.push({x,z,r,h:0,seed:Math.abs(Math.sin(x*127.1+z*311.7)),band:Math.min(NBANDS-1,Math.floor(r/MAXR*NBANDS))});
+    // 按坐标生成稳定的随机数：绝大多数是金属盖板，少量彩色塞，偶尔是空洞
+    const f=Math.abs(Math.sin(x*127.1+z*311.7))%1;
+    let kind=0;
+    if(f>.982)kind=5;
+    else if(f>.932)kind=1+Math.floor((f-.932)*80)%4;
+    rods.push({x,z,r,h:0,seed:f,kind,band:Math.min(NBANDS-1,Math.floor(r/MAXR*NBANDS))});
   }
   $('count').textContent=rods.length;
 }
@@ -56,8 +61,8 @@ function poly(points,fill,stroke){g.beginPath();points.forEach((p,i)=>i?g.lineTo
 function drawFloor(){
   const w=canvas.clientWidth,H=canvas.clientHeight,s=scale(),cx=w/2,cy=H*.55,heat=Math.min(1,energy*7);
   const glow=g.createRadialGradient(cx,cy,0,cx,cy,18*s);
-  glow.addColorStop(0,`rgba(188,204,120,${(.08+heat*.16).toFixed(3)})`);
-  glow.addColorStop(.55,'rgba(104,122,86,.05)');
+  glow.addColorStop(0,`rgba(172,182,158,${(.06+heat*.14).toFixed(3)})`);
+  glow.addColorStop(.55,'rgba(120,132,120,.04)');
   glow.addColorStop(1,'rgba(0,0,0,0)');
   g.beginPath();g.ellipse(cx,cy,18*s,18*s*tilt,0,0,Math.PI*2);g.fillStyle=glow;g.fill();
 
@@ -65,53 +70,63 @@ function drawFloor(){
   g.beginPath();g.ellipse(cx,cy,16.3*s,16.3*s*tilt,0,0,Math.PI*2);g.fillStyle='#0b0f0b';g.fill();
   g.beginPath();g.ellipse(cx,cy,15.9*s,15.9*s*tilt,0,0,Math.PI*2);g.strokeStyle='#272e25';g.lineWidth=Math.max(1,s*.2);g.stroke();
 
-  // 黄黑警示刻度
-  g.save();g.setLineDash([s*.42,s*.4]);
-  g.beginPath();g.ellipse(cx,cy,16.05*s,16.05*s*tilt,0,0,Math.PI*2);
-  g.strokeStyle='rgba(188,192,104,.65)';g.lineWidth=Math.max(1,s*.15);g.stroke();g.restore();
-
-  g.beginPath();g.ellipse(cx,cy,16.55*s,16.55*s*tilt,0,0,Math.PI*2);g.strokeStyle='#363f31';g.lineWidth=Math.max(1,s*.1);g.stroke();
+  // 金属环箍
+  g.beginPath();g.ellipse(cx,cy,15.85*s,15.85*s*tilt,0,0,Math.PI*2);
+  g.strokeStyle='#767d81';g.lineWidth=Math.max(1,s*.3);g.stroke();
+  g.beginPath();g.ellipse(cx,cy,16.35*s,16.35*s*tilt,0,0,Math.PI*2);g.strokeStyle='#3a4145';g.lineWidth=Math.max(1,s*.12);g.stroke();
 
   for(const rr of [5,10]){
     g.beginPath();g.ellipse(cx,cy,rr*s,rr*s*tilt,0,0,Math.PI*2);
-    g.strokeStyle='rgba(112,124,96,.13)';g.lineWidth=1;g.stroke();
+    g.strokeStyle='rgba(150,160,164,.1)';g.lineWidth=1;g.stroke();
   }
 }
 
 /* ---------------- 单根控制棒 ---------------- */
 
-const SIDE={back:'#12170f',left:'#191f18',right:'#2b342a',front:'#20281f'};
-const TOP=[88,96,80],HOT=[214,228,158];
+const SIDE={back:'#454b4e',left:'#565c5f',right:'#7b8286',front:'#646a6d'};
+// 0 金属盖板 / 1-4 彩色塞 / 5 空洞
+const KIND=[[150,156,158],[170,54,44],[190,158,58],[58,110,148],[70,132,88]];
+const VOID=[18,21,23];
 
 function drawRod(rod,amp,s){
   const {x,z,h}=rod,half=HALF;
   const b0=point(x-half,z-half,0),b1=point(x+half,z-half,0),b2=point(x+half,z+half,0),b3=point(x-half,z+half,0);
   const t0=point(x-half,z-half,h),t1=point(x+half,z-half,h),t2=point(x+half,z+half,h),t3=point(x-half,z+half,h);
+  const k=Math.min(1,amp*1.1);
 
-  // 落影
-  const cx=(b0[0]+b2[0])/2,cy=(b0[1]+b2[1])/2;
-  g.beginPath();g.ellipse(cx+s*.1,cy+s*.05,s*.46,s*.46*tilt,0,0,Math.PI*2);
-  g.fillStyle='rgba(3,7,4,.4)';g.fill();
+  // 抬起来才有影子
+  if(h>.2){
+    const cx=(b0[0]+b2[0])/2,cy=(b0[1]+b2[1])/2;
+    g.beginPath();g.ellipse(cx+s*.08,cy+s*.04,s*.5,s*.5*tilt,0,0,Math.PI*2);
+    g.fillStyle='rgba(6,9,11,.35)';g.fill();
+  }
 
-  // 先远后近，保证遮挡关系
-  poly([t0,t1,b1,b0],SIDE.back);
-  poly([t3,t0,b0,b3],SIDE.left);
-  poly([t1,t2,b2,b1],SIDE.right);
-  poly([t2,t3,b3,b2],SIDE.front);
+  // 塞块侧面
+  if(h>.05){
+    poly([t0,t1,b1,b0],SIDE.back);
+    poly([t3,t0,b0,b3],SIDE.left);
+    poly([t1,t2,b2,b1],SIDE.right);
+    poly([t2,t3,b3,b2],SIDE.front);
+  }
 
-  // 顶面：石墨底色，受激时偏向金属高光
-  const k=Math.min(1,amp*1.25),bias=(rod.seed-.5)*10;
-  const cr=(TOP[0]+(HOT[0]-TOP[0])*k+bias)|0,cg=(TOP[1]+(HOT[1]-TOP[1])*k+bias)|0,cb=(TOP[2]+(HOT[2]-TOP[2])*k+bias)|0;
-  poly([t0,t1,t2,t3],`rgb(${cr},${cg},${cb})`,'rgba(8,12,8,.55)');
+  // 顶面：金属灰为主，受激时整体提亮
+  let base=rod.kind===5?VOID:KIND[rod.kind];
+  if(rod.kind===0){const v=(rod.seed-.5)*18;base=[base[0]+v,base[1]+v,base[2]+v]}
+  const gk=rod.kind===0?k*.45:k*.1;
+  const cr=(base[0]+(226-base[0])*gk)|0,cg=(base[1]+(234-base[1])*gk)|0,cb=(base[2]+(190-base[2])*gk)|0;
+  poly([t0,t1,t2,t3],`rgb(${cr},${cg},${cb})`,'rgba(12,15,17,.6)');
 
-  if(s>5){
-    const mx=(t0[0]+t1[0]+t2[0]+t3[0])/4,my=(t0[1]+t1[1]+t2[1]+t3[1])/4;
-    const inset=[t0,t1,t2,t3].map(p=>[p[0]+(mx-p[0])*.52,p[1]+(my-p[1])*.52]);
-    g.beginPath();inset.forEach((p,i)=>i?g.lineTo(...p):g.moveTo(...p));g.closePath();
-    g.fillStyle=`rgba(240,246,206,${(.03+k*.14).toFixed(3)})`;g.fill();
-    if(k>.4){
-      g.beginPath();g.ellipse(mx,my,s*.07,s*.07*tilt,0,0,Math.PI*2);
-      g.fillStyle=`rgba(222,236,149,${(.16+k*.4).toFixed(3)})`;g.fill();
+  if(s>4){
+    const mx=(t0[0]+t2[0])/2,my=(t0[1]+t2[1])/2;
+    // 金属盖板中间那个方孔
+    if(rod.kind===0){
+      const q=[t0,t1,t2,t3].map(p=>[p[0]+(mx-p[0])*.58,p[1]+(my-p[1])*.58]);
+      poly(q,'#151a1c');
+    }
+    // 受激时的顶光
+    if(k>.3){
+      g.beginPath();g.ellipse(mx,my,s*.1,s*.1*tilt,0,0,Math.PI*2);
+      g.fillStyle=`rgba(226,240,170,${(.1+k*.35).toFixed(3)})`;g.fill();
     }
   }
 }
@@ -142,8 +157,8 @@ function frame(t){
   for(const rod of sorted){
     let amp;
     if(playing)amp=bands[rod.band].val*gain*.7;
-    else amp=.04+.1*(.5+.5*Math.sin(rod.r*.5-t*.0009+rod.x*.13));
-    const target=.45+Math.min(1.1,amp)*5.4;
+    else amp=.012+.03*(.5+.5*Math.sin(rod.r*.5-t*.0009+rod.x*.13));
+    const target=.05+Math.min(1.1,amp)*5.2;
     rod.h+=(target-rod.h)*(1-Math.pow(.45+smoothing*.53,dt));
     drawRod(rod,amp,s);
   }
