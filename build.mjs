@@ -444,9 +444,16 @@ Sitemap: ${site.url}/sitemap.xml
 `);
 
 // 静态资源
+// 以 _ 或 IMG_ 开头的文件（草稿、手机原图）不复制到发布目录
 const assetsDir = path.join(ROOT, 'assets');
 if (fs.existsSync(assetsDir)) {
-  fs.cpSync(assetsDir, path.join(OUT, 'assets'), { recursive: true });
+  fs.cpSync(assetsDir, path.join(OUT, 'assets'), {
+    recursive: true,
+    filter: (src) => {
+      const base = path.basename(src);
+      return !base.startsWith('_') && !base.startsWith('IMG_');
+    },
+  });
 }
 
 // Cloudflare Pages 设置
