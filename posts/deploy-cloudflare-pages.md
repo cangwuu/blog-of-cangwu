@@ -22,13 +22,13 @@ DigitalPlat 注册域名
       ↓  把 NS 改成 Cloudflare 给的两条
 Cloudflare 接管这个域名的全部解析
       ↓  在 Cloudflare 里建 Pages 项目 + 绑域名
-https://yourname.dpdns.org
+https://cangwu.dpdns.org
 ```
 
 ## 二、在 Cloudflare 添加站点
 
 1. 登录 Cloudflare，右上角 **Add a site**；
-2. 输入完整域名，例如 `yourname.dpdns.org`（注意是三级，别漏了前面的名字）；
+2. 输入完整域名，例如 `cangwu.dpdns.org`（注意是三级，别漏了前面的名字）；
 3. 套餐选 **Free**；
 4. Cloudflare 会扫一遍现有解析，扫不到东西没关系，直接继续；
 5. 最后它给你**两条 NS 地址**，形如：
@@ -49,7 +49,7 @@ bob.ns.cloudflare.com
 想自己确认有没有生效：
 
 ```bash
-dig NS yourname.dpdns.org
+dig NS cangwu.dpdns.org
 ```
 
 返回里应该有 `cloudflare.com` 结尾的两条。
@@ -101,7 +101,7 @@ git push -u origin main
 
 ## 七、绑定自定义域名
 
-Pages 项目 → **Custom domains** → **Set up a custom domain** → 输入 `yourname.dpdns.org`。
+Pages 项目 → **Custom domains** → **Set up a custom domain** → 输入 `cangwu.dpdns.org`。
 
 因为域名已经在 Cloudflare 里了，这一步它会**自动加一条 CNAME 并签证书**，不用你手动去 DNS 页面操作。等状态变成 *Active* 就成了。
 

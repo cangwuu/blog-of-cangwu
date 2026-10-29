@@ -4,24 +4,24 @@
 
 export default {
   // 站点基本信息
-  title: '拾光记',
+  title: 'cangwu的小博客',
   subtitle: '在代码、阅读与生活之间',
-  description: '一个用 Markdown 写作的静态博客，托管在 Cloudflare Pages。',
-  keywords: ['博客', '随笔', '前端', 'Cloudflare Pages'],
+  description: 'cangwu 的个人博客：技术笔记、读书笔记，和一些不想发在朋友圈的长句子。',
+  keywords: ['cangwu', '博客', '笔记', '随笔', 'Cloudflare Pages'],
 
   // 你的域名（结尾不要带斜杠）
-  url: 'https://yourname.dpdns.org',
+  url: 'https://cangwu.dpdns.org',
 
   // 作者
   author: {
-    name: '你的名字',
-    avatar: '/assets/avatar.svg',
-    bio: '写代码，也写字。这里记录一些值得留下来的东西。',
-    // 社交链接，不需要就删掉
+    name: 'cangwu',
+    avatar: '/assets/avatar.jpg',
+    bio: '写代码，也写字。这里放一些值得留下来的东西。',
+    // 社交链接，不需要的整行删掉即可
     links: [
-      { name: 'GitHub', url: 'https://github.com/yourname', icon: 'github' },
-      { name: '邮箱', url: 'mailto:you@example.com', icon: 'mail' },
+      { name: 'GitHub', url: 'https://github.com/cangwu', icon: 'github' },
       { name: 'RSS', url: '/feed.xml', icon: 'rss' },
+      { name: '关于', url: '/about/', icon: 'link' },
     ],
   },
 
@@ -46,9 +46,10 @@ export default {
   },
 
   // 评论（giscus，基于 GitHub Discussions，免费）
+  // 用法：仓库先开启 Discussions，去 https://giscus.app 生成下面四个值
   comments: {
     enabled: false,
-    repo: 'yourname/yourname.github.io',
+    repo: '',
     repoId: '',
     category: 'Announcements',
     categoryId: '',

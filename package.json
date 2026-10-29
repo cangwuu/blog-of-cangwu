@@ -8,6 +8,7 @@
     "build": "node build.mjs",
     "dev": "node serve.mjs",
     "serve": "node serve.mjs",
+    "check": "node scripts/check.mjs",
     "clean": "node -e \"fs.rmSync('public',{recursive:true,force:true})\""
   },
   "engines": {

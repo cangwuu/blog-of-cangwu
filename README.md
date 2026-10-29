@@ -1,4 +1,4 @@
-# 拾光记 · 一个零依赖的静态博客
+# cangwu的小博客 · 一个零依赖的静态博客
 
 Markdown 写东西，一条命令生成整站，扔到 Cloudflare Pages 就能访问。
 不需要 `npm install`，没有 `node_modules`，整个项目只有 Node 内置模块。
@@ -6,8 +6,9 @@ Markdown 写东西，一条命令生成整站，扔到 Cloudflare Pages 就能�
 ## 快速开始
 
 ```bash
-node build.mjs     # 生成到 public/
-node serve.mjs     # 本地预览 http://localhost:4321
+node build.mjs       # 生成到 public/
+node serve.mjs       # 本地预览 http://localhost:4321
+node scripts/check.mjs   # 自检：断链、残留占位符、结构统计
 ```
 
 要求 Node 18 以上。
@@ -53,11 +54,12 @@ blog/
 ├── site.config.mjs    站点配置（标题、域名、作者、导航、评论、统计）
 ├── build.mjs          生成器
 ├── serve.mjs          本地预览服务器
+├── scripts/check.mjs  构建后自检
 ├── lib/md.mjs         Markdown 渲染
 ├── lib/tpl.mjs        HTML 模板
 ├── posts/             文章
 ├── pages/             独立页面
-├── assets/            样式、脚本、图标
+├── assets/            样式、脚本、图标、头像
 └── public/            生成结果（不要手改，也不建议提交）
 ```
 

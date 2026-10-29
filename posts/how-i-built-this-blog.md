@@ -3,7 +3,7 @@ title: 关于我搭建网站的全过程，以及如何搭建一个像这样的�
 date: 2026-10-27 20:10:00
 tags: [教程, 博客, Cloudflare]
 categories: 记录
-excerpt: 从一台裸机到 https://yourname.dpdns.org 能打开，中间到底发生了什么？这篇把每一步都写下来。
+excerpt: 从一台裸机到 https://cangwu.dpdns.org 能打开，中间到底发生了什么？这篇把每一步都写下来。
 ---
 
 这篇文章回答两个问题：**我为什么这样搭**，以及**你照抄能不能搭出来**。
@@ -86,7 +86,7 @@ node serve.mjs     # 本地预览 http://localhost:4321
 我特意把 URL 做成了 `/年/月/日/标题/` 的形式，和大多数 Hexo 站一样：
 
 ```text
-https://yourname.dpdns.org/2026/10/27/how-i-built-this-blog/
+https://cangwu.dpdns.org/2026/10/27/how-i-built-this-blog/
 ```
 
 好处是链接自带时间信息，以后就算换掉生成器，URL 也不用改，别人的收藏和搜索引擎的记录都不会失效。

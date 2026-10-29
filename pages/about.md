@@ -29,8 +29,8 @@ description: 关于本站和它的作者。
 
 ## 联系我
 
-- GitHub：[yourname](https://github.com/yourname)
-- 邮箱：[you@example.com](mailto:you@example.com)
+- GitHub：[github.com/cangwu](https://github.com/cangwu)
+- 本站：[cangwu.dpdns.org](https://cangwu.dpdns.org)
 
 有错别字、事实错误，或者单纯想聊两句，都欢迎。
 
