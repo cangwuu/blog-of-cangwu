@@ -1,0 +1,16 @@
+{
+  "name": "ink-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "零依赖的静态博客生成器",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node serve.mjs",
+    "serve": "node serve.mjs",
+    "clean": "node -e \"fs.rmSync('public',{recursive:true,force:true})\""
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

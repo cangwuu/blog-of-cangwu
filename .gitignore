@@ -1,0 +1,17 @@
+# 生成结果
+public/
+
+# 依赖（本项目不需要，但以防万一）
+node_modules/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# 本地临时文件
+_*.mjs
+_*.md
+_*.txt
