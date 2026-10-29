@@ -66,8 +66,7 @@ export default {
   // 开启步骤：Cloudflare 控制台 → 分析 → Web Analytics → 添加站点
   //           → 复制 "JS 代码片段" 里的 token 填到下面
   analytics: {
-    // 例如 'a1b2c3d4e5f6...'
-    cloudflareToken: '',
+    cloudflareToken: '369d2d792ae746268360a7e873e59ec8',
   },
 
   // 首页首屏文案
