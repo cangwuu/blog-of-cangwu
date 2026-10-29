@@ -24,3 +24,7 @@ _*.py
 assets/IMG_*.jpg
 assets/IMG_*.jpeg
 assets/IMG_*.png
+
+# 直接拖进来的原图（构建也不会发布）
+assets/[0-9]*.png
+assets/[0-9]*.jpg

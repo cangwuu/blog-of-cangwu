@@ -6,6 +6,8 @@
 :root {
   --bg: #f7f6f3;
   --bg-soft: #f0efea;
+  /* 站点背景图，不想用了把这一行删掉即可 */
+  --bg-image: url("/assets/bg.jpg");
   --surface: #ffffff;
   --surface-2: #faf9f6;
   --text: #1b1c1e;
@@ -83,11 +85,19 @@ html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-h) + 20px);
+  background-color: var(--bg);
+  background-image: var(--bg-image);
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  /* 半透明底色盖在背景图上，保证正文可读 */
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -95,6 +105,23 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html[data-theme="dark"] body {
+  background: color-mix(in srgb, var(--bg) 89%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) body {
+    background: color-mix(in srgb, var(--bg) 89%, transparent);
+  }
+}
+
+/* 移动端固定背景容易掉帧，改成随页面滚动 */
+@media (max-width: 900px) {
+  html {
+    background-attachment: scroll;
+  }
 }
 
 img {
@@ -1346,7 +1373,7 @@ html[data-theme="dark"] .when-dark {
 
 .site-footer {
   border-top: 1px solid var(--border);
-  background: var(--bg-soft);
+  background: color-mix(in srgb, var(--bg-soft) 86%, transparent);
   padding: 40px 0;
 }
 

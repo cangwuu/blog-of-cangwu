@@ -505,16 +505,38 @@ Sitemap: ${site.url}/sitemap.xml
 `);
 
 // 静态资源
-// 以 _ 或 IMG_ 开头的文件（草稿、手机原图）不复制到发布目录
+// 以 _ 或 IMG_ 开头的文件（草稿、手机原图）不复制；超过 1.5MB 的原图也跳过，避免把几兆的原片推上线
+const MAX_ASSET = 1.5 * 1024 * 1024;
+const skippedAssets = [];
+
+function copyAssets(from, to) {
+  fs.mkdirSync(to, { recursive: true });
+  for (const entry of fs.readdirSync(from, { withFileTypes: true })) {
+    const base = entry.name;
+    if (base.startsWith('_') || base.startsWith('IMG_')) continue;
+    const src = path.join(from, base);
+    const dst = path.join(to, base);
+    if (entry.isDirectory()) {
+      copyAssets(src, dst);
+      continue;
+    }
+    const size = fs.statSync(src).size;
+    if (size > MAX_ASSET) {
+      skippedAssets.push(`${path.relative(ROOT, src)}（${(size / 1024 / 1024).toFixed(1)} MB）`);
+      continue;
+    }
+    fs.copyFileSync(src, dst);
+  }
+}
+
 const assetsDir = path.join(ROOT, 'assets');
 if (fs.existsSync(assetsDir)) {
-  fs.cpSync(assetsDir, path.join(OUT, 'assets'), {
-    recursive: true,
-    filter: (src) => {
-      const base = path.basename(src);
-      return !base.startsWith('_') && !base.startsWith('IMG_');
-    },
-  });
+  copyAssets(assetsDir, path.join(OUT, 'assets'));
+  if (skippedAssets.length) {
+    console.log('\n  ⚠ 以下文件太大，没有复制到站点：');
+    skippedAssets.forEach((s) => console.log(`     - ${s}`));
+    console.log('     （先压缩成网页尺寸再引用）\n');
+  }
 }
 
 // 静态页面（独立的小应用，比如 /reactor/）
