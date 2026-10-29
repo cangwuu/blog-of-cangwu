@@ -247,6 +247,7 @@ for (const post of posts) {
 
   const content = `<div class="container post-layout">
   <article class="post">
+    ${post.cover ? `<img class="post-cover" src="${esc(post.cover)}" alt="" loading="eager" decoding="async">` : ''}
     <header class="post-header">
       ${post.tags.length ? `<div class="post-tags">${post.tags.map((t) => `<a class="tag tag-sm" href="/tags/${encodeURIComponent(t)}/">${esc(t)}</a>`).join('')}</div>` : ''}
       <h1 class="post-title">${esc(post.title)}</h1>

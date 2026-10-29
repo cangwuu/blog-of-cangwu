@@ -36,19 +36,9 @@ export default {
   ],
 
   // 友链（渲染到 /links/ 页面）
-  // avatar 可以不填，会用一个带首字母的圆图标代替
-  friends: [
-    {
-      name: '萌社区',
-      url: 'https://moe.one/',
-      desc: '萌国 ICP 备案的所在地',
-    },
-    {
-      name: '异次元之旅',
-      url: 'https://travel.moe/go.html',
-      desc: '去萌站成员的星球上旅行',
-    },
-  ],
+  // 格式：{ name: '站名', url: 'https://...', desc: '一句话介绍', avatar: '可选' }
+  // avatar 不填会用一个带首字母的圆角块代替
+  friends: [],
 
   // 每页文章数
   postsPerPage: 8,
