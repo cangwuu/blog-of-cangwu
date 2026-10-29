@@ -53,11 +53,11 @@ export default {
   //   3. 页面往下会生成一段代码，把里面的 data-repo-id 和 data-category-id
   //      两个值抄到下面，然后把 enabled 改成 true
   comments: {
-    enabled: false,
+    enabled: true,
     repo: 'cangwuu/blog-of-cangwu',
-    repoId: '',
+    repoId: 'R_kgDOVbPSJA',
     category: 'Announcements',
-    categoryId: '',
+    categoryId: 'DIC_kwDOVbPSJM4DJ4Y0',
     mapping: 'pathname',
     theme: 'preferred_color_scheme',
   },
