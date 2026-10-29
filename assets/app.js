@@ -17,6 +17,7 @@
     try { localStorage.setItem(STORAGE_KEY, theme); } catch (e) {}
     syncGiscus(theme);
     syncBadges(theme);
+    try { document.dispatchEvent(new CustomEvent('site:theme', { detail: theme })); } catch (e) {}
   }
   var themeBtn = $('#theme-toggle');
   if (themeBtn) {
@@ -270,4 +271,82 @@
       openSearch();
     }
   });
+
+  /* ---------- 鼠标拖尾 ---------- */
+  (function mouseTrail() {
+    var fine = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!fine || reduce) return;
+
+    var canvas = document.createElement('canvas');
+    canvas.id = 'mouse-trail';
+    canvas.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dots = [];
+    var color = [15, 118, 110];
+    var lastSpawn = 0;
+
+    function readColor() {
+      var v = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+      var m = v.match(/^#?([0-9a-f]{6})$/i);
+      if (m) {
+        var n = parseInt(m[1], 16);
+        color = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+      }
+    }
+    readColor();
+    document.addEventListener('site:theme', readColor);
+
+    function resize() {
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function spawn(x, y) {
+      if (dots.length > 70) return;
+      dots.push({
+        x: x,
+        y: y,
+        r: 1.4 + Math.random() * 2.2,
+        life: 1,
+        vx: (Math.random() - 0.5) * 0.22,
+        vy: (Math.random() - 0.5) * 0.22 - 0.1
+      });
+    }
+
+    document.addEventListener('mousemove', function (e) {
+      var now = performance.now();
+      if (now - lastSpawn < 18) return;
+      lastSpawn = now;
+      spawn(e.clientX, e.clientY);
+    }, { passive: true });
+
+    var prev = performance.now();
+    function frame(now) {
+      var dt = Math.min(50, now - prev);
+      prev = now;
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      for (var i = dots.length - 1; i >= 0; i--) {
+        var d = dots[i];
+        d.life -= dt / 700;
+        if (d.life <= 0) { dots.splice(i, 1); continue; }
+        d.x += d.vx * dt * 0.06;
+        d.y += d.vy * dt * 0.06;
+        var e2 = d.life * d.life;
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, d.r * d.life, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (e2 * 0.5).toFixed(3) + ')';
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
 })();

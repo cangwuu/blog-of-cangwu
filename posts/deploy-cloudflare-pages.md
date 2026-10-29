@@ -5,6 +5,7 @@ tags: [教程, Cloudflare, 域名]
 categories: 记录
 excerpt: 从 DigitalPlat 面板到 Cloudflare Pages 的自定义域名，一共八步，每一步都写清楚了。
 pinned: true
+cover: /assets/cover-deploy.jpg
 ---
 
 手上的域名是一个 `dpdns.org` 的免费二级域名，托管用 Cloudflare Pages。这两样凑一起其实很顺，因为**它们都需要你把域名的 NS 交给 Cloudflare**。
