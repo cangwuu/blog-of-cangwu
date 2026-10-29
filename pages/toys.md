@@ -18,5 +18,3 @@ description: cangwu 的小玩具合集：声场反应堆、心动粒子。
     <span class="toy-go">进入 &#8594;</span>
   </a>
 </div>
-
-两个都是纯前端的小页面，没有后端，也不收集任何东西。

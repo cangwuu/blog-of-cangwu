@@ -350,11 +350,11 @@
     load();
     save();
 
-    // 提示条 6 秒后淡出，鼠标移上去再出现
-    setTimeout(function () { tip.style.opacity = '0'; }, 6000);
-    document.querySelector('.namebox').addEventListener('mouseenter', function () {
-      tip.style.opacity = '1';
-    });
+    // 提示条显示 5 秒后隐藏
+    setTimeout(function () {
+      tip.style.opacity = '0';
+      setTimeout(function () { tip.style.display = 'none'; }, 600);
+    }, 5000);
   })();
 </script>
 </body>
