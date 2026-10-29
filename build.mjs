@@ -429,7 +429,7 @@ write('feed.xml', feed);
 const urls = [
   { loc: '/', lastmod: posts[0]?.updatedIso },
   ...posts.map((p) => ({ loc: p.url, lastmod: p.updatedIso })),
-  { loc: '/archives/' }, { loc: '/tags/' }, { loc: '/about/' },
+  { loc: '/archives/' }, { loc: '/tags/' }, { loc: '/about/' }, { loc: '/reactor/' },
   ...tags.map((t) => ({ loc: `/tags/${encodeURIComponent(t.name)}/` })),
 ];
 write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
@@ -451,6 +451,19 @@ Sitemap: ${site.url}/sitemap.xml
 const assetsDir = path.join(ROOT, 'assets');
 if (fs.existsSync(assetsDir)) {
   fs.cpSync(assetsDir, path.join(OUT, 'assets'), {
+    recursive: true,
+    filter: (src) => {
+      const base = path.basename(src);
+      return !base.startsWith('_') && !base.startsWith('IMG_');
+    },
+  });
+}
+
+// 静态页面（独立的小应用，比如 /reactor/）
+// static/ 下的东西按原样铺到站点根目录，不走 Markdown 渲染
+const staticDir = path.join(ROOT, 'static');
+if (fs.existsSync(staticDir)) {
+  fs.cpSync(staticDir, OUT, {
     recursive: true,
     filter: (src) => {
       const base = path.basename(src);
