@@ -4,6 +4,7 @@ date: 2026-10-27 20:10:00
 tags: [教程, 博客, Cloudflare]
 categories: 记录
 excerpt: 从一台裸机到 https://cangwu.dpdns.org 能打开，中间到底发生了什么？这篇把每一步都写下来。
+cover: /assets/cover-building.jpg
 ---
 
 这篇文章回答两个问题：**我为什么这样搭**，以及**你照抄能不能搭出来**。

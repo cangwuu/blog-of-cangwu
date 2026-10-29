@@ -310,11 +310,11 @@
     window.addEventListener('resize', resize);
 
     function spawn(x, y) {
-      if (dots.length > 70) return;
+      if (dots.length > 90) return;
       dots.push({
         x: x,
         y: y,
-        r: 1.4 + Math.random() * 2.2,
+        r: 1.8 + Math.random() * 2.6,
         life: 1,
         vx: (Math.random() - 0.5) * 0.22,
         vy: (Math.random() - 0.5) * 0.22 - 0.1
@@ -323,7 +323,7 @@
 
     document.addEventListener('mousemove', function (e) {
       var now = performance.now();
-      if (now - lastSpawn < 18) return;
+      if (now - lastSpawn < 14) return;
       lastSpawn = now;
       spawn(e.clientX, e.clientY);
     }, { passive: true });
@@ -335,14 +335,14 @@
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       for (var i = dots.length - 1; i >= 0; i--) {
         var d = dots[i];
-        d.life -= dt / 700;
+        d.life -= dt / 750;
         if (d.life <= 0) { dots.splice(i, 1); continue; }
         d.x += d.vx * dt * 0.06;
         d.y += d.vy * dt * 0.06;
         var e2 = d.life * d.life;
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r * d.life, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (e2 * 0.5).toFixed(3) + ')';
+        ctx.fillStyle = 'rgba(' + color[0] + ',' + color[1] + ',' + color[2] + ',' + (e2 * 0.62).toFixed(3) + ')';
         ctx.fill();
       }
       requestAnimationFrame(frame);

@@ -4,6 +4,7 @@ date: 2026-10-26 21:30:00
 tags: [随笔, 开始]
 categories: 生活
 excerpt: 又一次从零开始写博客。这次想清楚了一件事：写作的地方应该是安静的。
+cover: /assets/cover-hello.jpg
 ---
 
 这是这个博客的第一篇文章。

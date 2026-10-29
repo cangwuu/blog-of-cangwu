@@ -1,6 +1,7 @@
 // 静态博客生成器：node build.mjs
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { renderMarkdown, escapeHtml as esc } from './lib/md.mjs';
 import * as tpl from './lib/tpl.mjs';
@@ -9,6 +10,17 @@ import site from './site.config.mjs';
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.join(ROOT, 'public');
 const TZ = '+08:00';
+
+// 用样式和脚本的内容算一个短版本号，拼到 URL 后面，
+// 这样既能长期缓存，换了内容浏览器又会立刻拿新的
+{
+  const h = crypto.createHash('sha1');
+  for (const f of ['assets/style.css', 'assets/app.js']) {
+    const p = path.join(ROOT, f);
+    if (fs.existsSync(p)) h.update(fs.readFileSync(p));
+  }
+  tpl.setAssetVersion(h.digest('hex').slice(0, 8));
+}
 
 /* ---------------- 工具 ---------------- */
 

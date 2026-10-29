@@ -4,6 +4,7 @@ date: 2026-10-25 15:00:00
 tags: [Markdown, 写作]
 categories: 手册
 excerpt: 一页纸的速查表。忘了怎么写表格或代码块的时候翻这里。
+cover: /assets/cover-markdown.jpg
 ---
 
 这篇是给自己看的备忘，顺便当成渲染器的测试页。
