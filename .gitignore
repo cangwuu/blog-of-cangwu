@@ -11,6 +11,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# SSH 私钥，绝对不能提交
+.ssh/
+
 # 本地临时文件
 _*.mjs
 _*.md
