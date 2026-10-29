@@ -1805,3 +1805,59 @@ html[data-theme="dark"] .card-cover-ph span {
     font-size: 12.5px;
   }
 }
+
+/* ---------------- 小玩具 ---------------- */
+
+.toy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.toy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.toy-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--border));
+  box-shadow: var(--shadow-md);
+}
+
+.toy-emoji {
+  font-size: 24px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.toy-card h3 {
+  margin: 0;
+  font-size: 17.5px;
+  font-weight: 640;
+  letter-spacing: 0;
+}
+
+.toy-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.72;
+  color: var(--text-soft);
+}
+
+.toy-go {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--accent-strong);
+}
+
+.toy-card:hover .toy-go {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -40,7 +40,8 @@ for (const f of htmls) {
     }
   }
 
-  for (const re of [/\bundefined\b/, /\bNaN\b/, /\[object Object\]/]) {
+  // 只抓真正漏出来的值，忽略代码里本来就有的 'undefined' 字符串
+  for (const re of [/(?<!['"])\bundefined\b/, /\bNaN\b/, /\[object Object\]/]) {
     if (re.test(html)) {
       console.log(`  ! 可疑输出  ${rel} :: ${re}`);
       suspicious++;

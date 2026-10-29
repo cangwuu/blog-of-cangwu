@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <title>心动粒子 · 小玩具</title>
+  <meta name="description" content="一屏会心跳的粒子，名字可以自己改。">
+  <script src="https://cdn.jsdelivr.net/gh/zyoushuo/Blog/hexo/js/mouse_slide.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/zyoushuo/Blog/hexo/js/clicklove.js"></script>
+  <style type="text/css">
+    html, body {
+      height: 100%;
+      padding: 0;
+      margin: 0;
+      background: #000;
+      overflow: hidden;
+    }
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    .namebox {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      width: min(92vw, 780px);
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: #fff;
+      user-select: none;
+    }
+    .namebox h1 {
+      margin: 0 auto;
+      font-size: clamp(22px, 4.6vw, 44px);
+      font-weight: 700;
+      line-height: 1.7;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 24px rgba(255, 48, 197, 0.35);
+    }
+    .namebox .n {
+      display: inline-block;
+      min-width: 1em;
+      padding: 0 0.14em;
+      border-radius: 8px;
+      outline: none;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.28);
+      transition: background 0.2s ease, border-color 0.2s ease;
+      user-select: text;
+      cursor: text;
+    }
+    .namebox .n:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-bottom-color: rgba(255, 255, 255, 0.5);
+    }
+    .namebox .n:focus {
+      background: rgba(255, 48, 197, 0.16);
+      border-bottom-color: #ff30c5;
+      border-bottom-style: solid;
+    }
+    .namebox .n:empty::before {
+      content: "点这里输入";
+      opacity: 0.35;
+    }
+    .namebox .heart {
+      margin: 0 0.16em;
+      filter: drop-shadow(0 0 12px rgba(255, 48, 197, 0.55));
+    }
+    .namebox .tip {
+      margin: 16px 0 0;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: rgba(255, 255, 255, 0.42);
+      transition: opacity 0.6s ease;
+    }
+    .back {
+      position: fixed;
+      left: 18px;
+      bottom: 16px;
+      z-index: 3;
+      color: rgba(255, 255, 255, 0.45);
+      font-size: 13px;
+      text-decoration: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .back:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<canvas id="pinkboard"></canvas>
+<script>
+  var settings = {
+    particles: {
+      length: 500,
+      duration: 2,
+      velocity: 100,
+      effect: -0.75,
+      size: 30
+    }
+  };
+  (function () {
+    var b = 0;
+    var c = ["ms", "moz", "webkit", "o"];
+    for (var a = 0; a < c.length && !window.requestAnimationFrame; ++a) {
+      window.requestAnimationFrame = window[c[a] + "RequestAnimationFrame"];
+      window.cancelAnimationFrame = window[c[a] + "CancelAnimationFrame"] || window[c[a] + "CancelRequestAnimationFrame"];
+    }
+    if (!window.requestAnimationFrame) {
+      window.requestAnimationFrame = function (h, e) {
+        var d = new Date().getTime();
+        var f = Math.max(0, 16 - (d - b));
+        var g = window.setTimeout(function () { h(d + f); }, f);
+        b = d + f;
+        return g;
+      };
+    }
+    if (!window.cancelAnimationFrame) {
+      window.cancelAnimationFrame = function (d) { clearTimeout(d); };
+    }
+  })();
+
+  var Point = (function () {
+    function Point(x, y) {
+      this.x = (typeof x !== 'undefined') ? x : 0;
+      this.y = (typeof y !== 'undefined') ? y : 0;
+    }
+    Point.prototype.clone = function () { return new Point(this.x, this.y); };
+    Point.prototype.length = function (length) {
+      if (typeof length == 'undefined') return Math.sqrt(this.x * this.x + this.y * this.y);
+      this.normalize();
+      this.x *= length;
+      this.y *= length;
+      return this;
+    };
+    Point.prototype.normalize = function () {
+      var length = this.length();
+      this.x /= length;
+      this.y /= length;
+      return this;
+    };
+    return Point;
+  })();
+
+  var Particle = (function () {
+    function Particle() {
+      this.position = new Point();
+      this.velocity = new Point();
+      this.acceleration = new Point();
+      this.age = 0;
+    }
+    Particle.prototype.initialize = function (x, y, dx, dy) {
+      this.position.x = x;
+      this.position.y = y;
+      this.velocity.x = dx;
+      this.velocity.y = dy;
+      this.acceleration.x = dx * settings.particles.effect;
+      this.acceleration.y = dy * settings.particles.effect;
+      this.age = 0;
+    };
+    Particle.prototype.update = function (deltaTime) {
+      this.position.x += this.velocity.x * deltaTime;
+      this.position.y += this.velocity.y * deltaTime;
+      this.velocity.x += this.acceleration.x * deltaTime;
+      this.velocity.y += this.acceleration.y * deltaTime;
+      this.age += deltaTime;
+    };
+    Particle.prototype.draw = function (context, image) {
+      function ease(t) { return (--t) * t * t + 1; }
+      var size = image.width * ease(this.age / settings.particles.duration);
+      context.globalAlpha = 1 - this.age / settings.particles.duration;
+      context.drawImage(image, this.position.x - size / 2, this.position.y - size / 2, size, size);
+    };
+    return Particle;
+  })();
+
+  var ParticlePool = (function () {
+    var particles,
+      firstActive = 0,
+      firstFree = 0,
+      duration = settings.particles.duration;
+    function ParticlePool(length) {
+      particles = new Array(length);
+      for (var i = 0; i < particles.length; i++) particles[i] = new Particle();
+    }
+    ParticlePool.prototype.add = function (x, y, dx, dy) {
+      particles[firstFree].initialize(x, y, dx, dy);
+      firstFree++;
+      if (firstFree == particles.length) firstFree = 0;
+      if (firstActive == firstFree) firstActive++;
+      if (firstActive == particles.length) firstActive = 0;
+    };
+    ParticlePool.prototype.update = function (deltaTime) {
+      var i;
+      if (firstActive < firstFree) {
+        for (i = firstActive; i < firstFree; i++) particles[i].update(deltaTime);
+      }
+      if (firstFree < firstActive) {
+        for (i = firstActive; i < particles.length; i++) particles[i].update(deltaTime);
+        for (i = 0; i < firstFree; i++) particles[i].update(deltaTime);
+      }
+      while (particles[firstActive].age >= duration && firstActive != firstFree) {
+        firstActive++;
+        if (firstActive == particles.length) firstActive = 0;
+      }
+    };
+    ParticlePool.prototype.draw = function (context, image) {
+      if (firstActive < firstFree) {
+        for (i = firstActive; i < firstFree; i++) particles[i].draw(context, image);
+      }
+      if (firstFree < firstActive) {
+        for (i = firstActive; i < particles.length; i++) particles[i].draw(context, image);
+        for (i = 0; i < firstFree; i++) particles[i].draw(context, image);
+      }
+    };
+    return ParticlePool;
+  })();
+
+  (function (canvas) {
+    var context = canvas.getContext('2d'),
+      particles = new ParticlePool(settings.particles.length),
+      particleRate = settings.particles.length / settings.particles.duration,
+      time;
+
+    function pointOnHeart(t) {
+      return new Point(
+        160 * Math.pow(Math.sin(t), 3),
+        130 * Math.cos(t) - 50 * Math.cos(2 * t) - 20 * Math.cos(3 * t) - 10 * Math.cos(4 * t) + 25
+      );
+    }
+
+    var image = (function () {
+      var canvas = document.createElement('canvas'),
+        context = canvas.getContext('2d');
+      canvas.width = settings.particles.size;
+      canvas.height = settings.particles.size;
+      function to(t) {
+        var point = pointOnHeart(t);
+        point.x = settings.particles.size / 2 + point.x * settings.particles.size / 350;
+        point.y = settings.particles.size / 2 - point.y * settings.particles.size / 350;
+        return point;
+      }
+      context.beginPath();
+      var t = -Math.PI;
+      var point = to(t);
+      context.moveTo(point.x, point.y);
+      while (t < Math.PI) {
+        t += 0.01;
+        point = to(t);
+        context.lineTo(point.x, point.y);
+      }
+      context.closePath();
+      context.fillStyle = '#ff30c5';
+      context.fill();
+      var image = new Image();
+      image.src = canvas.toDataURL();
+      return image;
+    })();
+
+    function render() {
+      requestAnimationFrame(render);
+      var newTime = new Date().getTime() / 1000,
+        deltaTime = newTime - (time || newTime);
+      time = newTime;
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      var amount = particleRate * deltaTime;
+      for (var i = 0; i < amount; i++) {
+        var pos = pointOnHeart(Math.PI - 2 * Math.PI * Math.random());
+        var dir = pos.clone().length(settings.particles.velocity);
+        particles.add(canvas.width / 2 + pos.x, canvas.height / 2 - pos.y, dir.x, -dir.y);
+      }
+      particles.update(deltaTime);
+      particles.draw(context, image);
+    }
+
+    function onResize() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+    window.onresize = onResize;
+    setTimeout(function () {
+      onResize();
+      render();
+    }, 10);
+  })(document.getElementById('pinkboard'));
+</script>
+
+<div class="namebox">
+  <h1>
+    <span class="n" id="nameA" contenteditable="true" spellcheck="false" tabindex="0">小牛同学</span><span class="heart">&#10084;&#65039;</span><span class="n" id="nameB" contenteditable="true" spellcheck="false" tabindex="0">小垒同学</span>
+  </h1>
+  <p class="tip" id="tip">点一下名字就能改，改完自动存在这台设备上</p>
+</div>
+<a class="back" href="/toys/">&#8592; 小玩具</a>
+
+<script>
+  (function () {
+    var KEY = 'pinkboard:names';
+    var A = document.getElementById('nameA');
+    var B = document.getElementById('nameB');
+    var tip = document.getElementById('tip');
+    var DEFAULT = ['小牛同学', '小垒同学'];
+
+    function load() {
+      try {
+        var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (Array.isArray(saved) && saved.length === 2) {
+          if (saved[0]) A.textContent = saved[0];
+          if (saved[1]) B.textContent = saved[1];
+        }
+      } catch (e) {}
+    }
+
+    function save() {
+      var a = A.textContent.trim();
+      var b = B.textContent.trim();
+      try {
+        if (!a && !b) localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, JSON.stringify([a, b]));
+      } catch (e) {}
+      document.title = (a || DEFAULT[0]) + ' \u2764\ufe0f ' + (b || DEFAULT[1]);
+    }
+
+    // 粘贴时只取纯文本，避免把 HTML 带进来
+    [A, B].forEach(function (el) {
+      el.addEventListener('paste', function (e) {
+        e.preventDefault();
+        var text = (e.clipboardData || window.clipboardData).getData('text');
+        document.execCommand('insertText', false, text.replace(/\s+/g, ' ').trim());
+      });
+      el.addEventListener('input', save);
+      el.addEventListener('blur', function () {
+        save();
+        if (!el.textContent.trim()) el.textContent = '';
+      });
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          el.blur();
+        }
+      });
+    });
+
+    load();
+    save();
+
+    // 提示条 6 秒后淡出，鼠标移上去再出现
+    setTimeout(function () { tip.style.opacity = '0'; }, 6000);
+    document.querySelector('.namebox').addEventListener('mouseenter', function () {
+      tip.style.opacity = '1';
+    });
+  })();
+</script>
+</body>
+</html>

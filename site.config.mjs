@@ -30,7 +30,7 @@ export default {
     { name: '首页', url: '/' },
     { name: '归档', url: '/archives/' },
     { name: '标签', url: '/tags/' },
-    { name: '小玩具', url: '/reactor/' },
+    { name: '小玩具', url: '/toys/' },
     { name: '关于', url: '/about/' },
   ],
 
