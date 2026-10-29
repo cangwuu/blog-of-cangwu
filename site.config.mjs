@@ -39,9 +39,11 @@ export default {
   // 页脚
   footer: {
     since: 2026,
-    // 想显示备案号就填在这里，比如 '沪ICP备00000000号'
-    icp: '',
-    icpUrl: 'https://beian.miit.gov.cn/',
+    // 站点底部的备案链接。萌国 ICP 备案填这里：
+    // 文案 = 萌ICP备20264210号，地址 = https://icp.gov.moe/?keyword=20264210
+    // 真实工信部备案同理，把下面两行换成自己的
+    icp: '萌ICP备20264210号',
+    icpUrl: 'https://icp.gov.moe/?keyword=20264210',
     extra: '由 Markdown 与一点点耐心驱动',
   },
 

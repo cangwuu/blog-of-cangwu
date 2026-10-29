@@ -1353,12 +1353,23 @@ html[data-theme="dark"] .when-dark {
   opacity: 0.85;
 }
 
+.footer-icp-line {
+  margin-top: 6px;
+}
+
 .footer-icp {
-  margin-left: 8px;
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  letter-spacing: 0.02em;
 }
 
 .footer-icp:hover {
   color: var(--accent-strong);
+  border-color: var(--accent);
 }
 
 /* ---------------- 回到顶部 ---------------- */
