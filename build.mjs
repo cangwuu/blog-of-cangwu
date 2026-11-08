@@ -20,12 +20,17 @@ const TZ = '+08:00';
     if (fs.existsSync(p)) h.update(fs.readFileSync(p));
   }
   tpl.setAssetVersion(h.digest('hex').slice(0, 8));
+
+  // 样式直接内联进页面：少一次阻塞渲染的请求，首屏更快
+  const cssPath = path.join(ROOT, 'assets/style.css');
+  if (fs.existsSync(cssPath)) tpl.setInlineStyle(fs.readFileSync(cssPath, 'utf8'));
 }
 
 /* ---------------- 工具 ---------------- */
 
 function parseFrontMatter(raw) {
-  const text = raw.replace(/\r\n?/g, '\n');
+  // 有些 Windows 编辑器会写 UTF-8 BOM，先去掉，否则 front matter 认不出来
+  const text = raw.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
   if (!text.startsWith('---')) return { data: {}, body: text };
   const end = text.indexOf('\n---', 3);
   if (end === -1) return { data: {}, body: text };

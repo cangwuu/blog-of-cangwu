@@ -6,12 +6,16 @@ Markdown 写东西，一条命令生成整站，扔到 Cloudflare Pages 就能�
 ## 快速开始
 
 ```bash
-node build.mjs       # 生成到 public/
+node dev.mjs         # 写作模式：改文件自动重建 + 浏览器自动刷新
+node build.mjs       # 只生成到 public/
 node serve.mjs       # 本地预览 http://localhost:4321
 node scripts/check.mjs   # 自检：断链、残留占位符、结构统计
 ```
 
 要求 Node 18 以上。
+
+`dev.mjs` 会监听 `posts/`、`pages/`、`assets/`、`lib/`、`static/` 和两个配置文件；
+保存后在浏览器里直接看到结果，不用手动刷新。它只用于本地，线上仍然是 `node build.mjs`。
 
 ## 写一篇文章
 

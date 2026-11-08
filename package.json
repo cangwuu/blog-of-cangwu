@@ -6,7 +6,7 @@
   "description": "零依赖的静态博客生成器",
   "scripts": {
     "build": "node build.mjs",
-    "dev": "node serve.mjs",
+    "dev": "node dev.mjs",
     "serve": "node serve.mjs",
     "check": "node scripts/check.mjs",
     "clean": "node -e \"fs.rmSync('public',{recursive:true,force:true})\""
