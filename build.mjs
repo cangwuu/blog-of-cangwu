@@ -187,6 +187,9 @@ for (let page = 1; page <= totalPages; page++) {
       <span class="sep"></span>
       <span>更新于 ${tpl.formatDate(posts[0]?.dateIso || '', 'iso')}</span>
     </div>
+    <a class="beijing-clock" href="https://time.is/Beijing" target="_blank" rel="noopener" title="北京时间（UTC+8）">
+      <span class="clock-label">北京时间</span><span class="clock-time" id="clock-time">--:--:--</span>
+    </a>
   </div>
 </div></section>`
       : '';

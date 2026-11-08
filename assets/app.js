@@ -272,6 +272,36 @@
     }
   });
 
+  /* ---------- 北京时间 ---------- */
+  (function clock() {
+    var el = document.getElementById('clock-time');
+    if (!el) return;
+    var fmt = null;
+    try {
+      fmt = new Intl.DateTimeFormat('zh-CN', {
+        timeZone: 'Asia/Shanghai',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    } catch (e) {}
+
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+    function tick() {
+      if (fmt) {
+        el.textContent = fmt.format(new Date());
+      } else {
+        // 环境不支持时区参数时退化成本地时间 + 时差补偿
+        var d = new Date(Date.now() + (new Date().getTimezoneOffset() + 480) * 60000);
+        el.textContent = pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+      }
+      setTimeout(tick, 1000 - (Date.now() % 1000));
+    }
+    tick();
+  })();
+
   /* ---------- 鼠标拖尾 ---------- */
   (function mouseTrail() {
     var fine = window.matchMedia && window.matchMedia('(pointer: fine)').matches;

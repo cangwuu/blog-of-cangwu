@@ -2039,3 +2039,32 @@ html[data-theme="dark"] .friend-avatar-ph {
   pointer-events: none;
   z-index: 45;
 }
+
+/* ---------------- 北京时间 ---------------- */
+
+.beijing-clock {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 5px 13px;
+  border-radius: 9px;
+  background: #39c5bb;
+  color: #052926;
+  font-size: clamp(13px, 1.5vw, 16px);
+  font-weight: 620;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 20px -12px rgba(57, 197, 187, 0.95);
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.beijing-clock:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.clock-time {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.03em;
+}
