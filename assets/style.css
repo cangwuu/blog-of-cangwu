@@ -117,10 +117,11 @@ html[data-theme="dark"] body {
   }
 }
 
-/* 移动端固定背景容易掉帧，改成随页面滚动 */
+/* 移动端：背景改成随页面滚动，并且只下 900 宽的小图 */
 @media (max-width: 900px) {
   html {
     background-attachment: scroll;
+    background-image: url("/assets/bg-900.jpg");
   }
 }
 

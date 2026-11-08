@@ -120,6 +120,15 @@ const posts = fs
     const tags = toArray(data.tags).filter(Boolean);
     const excerpt = data.excerpt || data.description || makeExcerpt(body);
     const [yy, mm, dd] = iso.slice(0, 10).split('-');
+
+    // 有对应的小图就生成 srcset，窄屏不用下整张 900 宽的图
+    const cover = data.cover || '';
+    let coverSm = '';
+    if (cover.startsWith('/assets/') && /\.jpg$/i.test(cover)) {
+      const smRel = cover.slice(1).replace(/\.jpg$/i, '-sm.jpg');
+      if (fs.existsSync(path.join(ROOT, smRel))) coverSm = `/${smRel}`;
+    }
+
     return {
       file,
       slug,
@@ -132,7 +141,8 @@ const posts = fs
       updatedIso: data.updated ? parseDate(data.updated).iso : iso,
       tags,
       categories: toArray(data.categories),
-      cover: data.cover || '',
+      cover,
+      coverSm,
       excerpt,
       draft: data.draft === true,
       pinned: data.pinned === true,
@@ -214,7 +224,7 @@ for (let page = 1; page <= totalPages; page++) {
     <a class="section-more" href="/archives/">全部归档 ${tpl.icon('arrowRight')}</a>
   </div>
   <div class="post-grid">
-    ${slice.map(tpl.postCard).join('\n    ') || '<p class="empty">还没有文章，去 posts/ 里写第一篇吧。</p>'}
+    ${slice.map((p, i) => tpl.postCard(p, { eager: i === 0 })).join('\n    ') || '<p class="empty">还没有文章，去 posts/ 里写第一篇吧。</p>'}
   </div>
   ${tpl.pagination({ current: page, total: totalPages, base: '/' })}
 </section>
